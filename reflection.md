@@ -7,6 +7,31 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+Core actions a user should be able to perform:
+1. Add a pet and its owner's basic info
+2. Add/edit care tasks with duration and priority
+3. Generate and view a daily schedule based on priority and time constraints
+
+Owner
+
+Attributes: name, pets (list of Pet objects), preferences (e.g. preferred start time, max hours per day)
+Methods: add_pet(), get_all_tasks()
+
+Pet
+
+Attributes: name, species, tasks (list of Task objects)
+Methods: add_task(), get_tasks()
+
+Task
+
+Attributes: description, duration (minutes), priority (high/medium/low), time (optional preferred time), frequency (daily/weekly/once), completed (bool)
+Methods: mark_complete()
+
+Scheduler
+
+Attributes: owner (reference to the Owner whose tasks it schedules)
+Methods: generate_plan(available_minutes), sort_by_priority(), detect_conflicts(), explain_plan()
+
 **b. Design changes**
 
 - Did your design change during implementation?
