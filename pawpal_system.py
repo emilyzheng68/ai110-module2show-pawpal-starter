@@ -8,6 +8,7 @@ class Task:
     duration: int  # in minutes
     priority: str  # "high", "medium", "low"
     frequency: str  # "daily", "weekly", "once"
+    pet_name: str = ""  # which pet this task belongs to
     time: Optional[str] = None  # preferred time (optional)
     completed: bool = False
 

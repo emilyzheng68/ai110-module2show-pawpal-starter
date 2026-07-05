@@ -37,6 +37,8 @@ Methods: generate_plan(available_minutes), sort_by_priority(), detect_conflicts(
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
