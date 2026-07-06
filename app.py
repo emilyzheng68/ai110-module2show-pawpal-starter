@@ -38,6 +38,7 @@ if "pet" not in st.session_state:
 
 owner = st.session_state.owner
 pet = st.session_state.pet
+scheduler = Scheduler(owner)
 
 # Keep name/species in sync if the user edits the text fields
 owner.name = owner_name
@@ -57,33 +58,59 @@ with col3:
 with col4:
     task_time = st.text_input("Time (HH:MM, optional)", value="")
 
+frequency = st.selectbox("Frequency", ["once", "daily", "weekly"], index=0)
+
 if st.button("Add task"):
     new_task = Task(
         description=task_title,
         duration=int(duration),
         priority=priority,
-        frequency="daily",
+        frequency=frequency,
         time=task_time if task_time else None,
     )
     pet.add_task(new_task)
     st.success(f"Added task: {task_title}")
 
-current_tasks = pet.get_tasks()
-if current_tasks:
-    st.write("Current tasks:")
-    st.table(
-        [
-            {
-                "Task": t.description,
-                "Duration (min)": t.duration,
-                "Priority": t.priority,
-                "Time": t.time or "—",
-            }
-            for t in current_tasks
-        ]
+st.markdown("### Current Tasks")
+
+# --- Filter controls (Phase 4 feature) ---
+filter_col1, filter_col2 = st.columns(2)
+with filter_col1:
+    filter_pet = st.selectbox(
+        "Filter by pet",
+        ["All pets"] + [p.name for p in owner.pets],
     )
+with filter_col2:
+    filter_status = st.selectbox("Filter by status", ["All", "Incomplete", "Completed"])
+
+all_tasks = owner.get_all_tasks()
+filtered_tasks = scheduler.filter_tasks(
+    all_tasks,
+    pet_name=None if filter_pet == "All pets" else filter_pet,
+    completed=None if filter_status == "All" else (filter_status == "Completed"),
+)
+
+if filtered_tasks:
+    for i, task in enumerate(filtered_tasks):
+        t_col1, t_col2 = st.columns([4, 1])
+        with t_col1:
+            status = "✅" if task.completed else "⬜"
+            time_str = f" @ {task.time}" if task.time else ""
+            st.write(
+                f"{status} **{task.description}** — {task.pet_name} "
+                f"({task.duration} min, {task.priority}, {task.frequency}{time_str})"
+            )
+        with t_col2:
+            if not task.completed:
+                if st.button("Complete", key=f"complete_{i}_{task.description}"):
+                    next_task = scheduler.complete_task(task)
+                    if next_task:
+                        st.success(f"Completed! Next '{next_task.description}' scheduled.")
+                    else:
+                        st.success("Marked complete!")
+                    st.rerun()
 else:
-    st.info("No tasks yet. Add one above.")
+    st.info("No tasks match this filter.")
 
 st.divider()
 
@@ -93,9 +120,6 @@ available_minutes = st.number_input(
 )
 
 if st.button("Generate schedule"):
-    scheduler = Scheduler(owner)
-    all_tasks = owner.get_all_tasks()
-
     if not all_tasks:
         st.warning("No tasks to schedule yet. Add some tasks first.")
     else:
