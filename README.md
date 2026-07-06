@@ -44,10 +44,6 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
-
-## 🖥️ Sample Output
-
 ```
 Daily Plan:
 - Morning walk (Pet: Biscuit, Duration: 30 mins, Priority: high)
@@ -63,18 +59,32 @@ Conflict: Task 'Litter box cleaning' (Pet: Whiskers) conflicts with Task 'Feedin
 ```bash
 # Run the full test suite:
 pytest
-
-# Run with coverage:
-pytest --cov
 ```
+
+My test suite covers:
+- Task completion status changes (`mark_complete()`)
+- Adding tasks increases a pet's task count
+- Sorting tasks correctly by priority (high → medium → low)
+- Recurring tasks (daily/weekly) automatically generate their next occurrence when completed
+- One-time tasks do NOT generate a next occurrence
+- Conflict detection correctly flags tasks scheduled at the same time
+- Conflict detection correctly reports no conflicts when times differ
 
 Sample test output:
 
 ```
-# Paste your pytest output here
+======================================================== test session starts =========================================================
+platform darwin -- Python 3.13.1, pytest-9.1.0, pluggy-1.6.0
+rootdir: /Users/emilyzheng/ai110-module2show-pawpal-starter
+plugins: dash-3.2.0, anyio-4.13.0
+collected 7 items
+
+tests/test_pawpal.py .......                                                                                                   [100%]
+
+========================================================= 7 passed in 0.01s ==========================================================
 ```
 
-## 📐 Smarter Scheduling
+**Confidence Level:** ⭐⭐⭐⭐☆ (4/5) — Core behaviors are verified and passing, but edge cases like empty task lists or malformed time strings haven't been tested yet.
 
 ## 📐 Smarter Scheduling
 

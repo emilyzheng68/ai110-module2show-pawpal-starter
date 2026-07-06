@@ -71,15 +71,11 @@ I asked Copilot how to simplify filter_tasks and create_next_occurrence. Its fil
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+I tested task completion, adding tasks to a pet, sorting by priority, recurring task generation (daily and one-time), and conflict detection (both when conflicts exist and when they don't). These were important because they cover the core "smart" behaviors of the scheduler — if sorting or recurrence broke, the whole app's usefulness would break with it.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
-
----
+I'm fairly confident (4/5) the scheduler works correctly for the cases I tested. If I had more time, I'd test edge cases like: an empty task list, a pet with no tasks at all, three or more tasks all conflicting at the same time, and tasks with missing/invalid time strings.
 
 ## 5. Reflection
 
