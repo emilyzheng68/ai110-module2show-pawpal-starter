@@ -37,7 +37,9 @@ Methods: generate_plan(available_minutes), sort_by_priority(), detect_conflicts(
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+I asked Copilot to review pawpal_system.py for missing relationships or bottlenecks. It flagged that Task had no reference back to the Pet it belongs to, which would make it hard to trace tasks once they're pulled together across multiple pets for scheduling (e.g., in generate_plan or explain_plan). I added a `pet_name` field to Task to fix this.
 
+Copilot also raised points about priority tie-breaking, conflict definitions, and recurring task logic — I'm deferring those to Phase 2 and Phase 4 since they depend on logic I haven't written yet, rather than being skeleton-level design flaws. I decided not to add a two-way Owner↔Scheduler reference or a structured preferences class, since those would add complexity without a clear benefit for this project's scope.
 
 ---
 
@@ -45,13 +47,13 @@ Methods: generate_plan(available_minutes), sort_by_priority(), detect_conflicts(
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+My scheduler considers two main constraints: task priority (high/medium/low) and available time (in minutes). generate_plan() sorts tasks by priority first, then greedily fills the available time budget, so higher-priority tasks are always favored when time is limited. I decided priority and time mattered most because they're the two things a busy pet owner cares about most directly — what's most important to get done, and how much time they actually have. Owner preferences (like max hours per day) exist as a data structure but aren't yet used directly in scheduling logic — that's a possible improvement for later.
+
+
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+My conflict detection only checks for exact matching time strings (e.g., "09:00" vs "09:00"), rather than detecting overlapping durations (e.g., a 30-minute task starting at 08:45 overlapping a 09:00 task). This is a simpler and more predictable approach for a small personal pet-scheduling app, where tasks are usually assigned to fixed time slots rather than flexible windows. A more robust version would parse times and compare intervals, but that adds complexity that isn't necessary at this scale.
 
 ---
 
@@ -59,15 +61,11 @@ Methods: generate_plan(available_minutes), sort_by_priority(), detect_conflicts(
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used AI throughout the project: brainstorming the four core classes and their responsibilities, generating a Mermaid.js UML diagram from my design, scaffolding the initial class skeletons, reviewing my skeleton for missing relationships (which led me to add pet_name to Task), and suggesting algorithm simplifications for filtering and recurrence logic. The most helpful prompts were specific ones that referenced my actual files (e.g., "based on my skeleton in pawpal_system.py...") rather than generic questions, since they produced code that matched my existing design instead of a generic alternative.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
-
----
+I asked Copilot how to simplify filter_tasks and create_next_occurrence. Its filter_tasks suggestion (combining conditions into one list comprehension) was a genuine improvement, so I adopted it. However, its "simplified" create_next_occurrence actually changed the function's behavior — instead of returning a new Task object ready to attach to a Pet, it returned a datetime representing the next due date. That would have broken complete_task(), which expects a Task back so it can call pet.add_task(). I verified this by tracing through how complete_task() uses the return value, and decided to keep my original version since it matched the rest of my system's design.
 
 ## 4. Testing and Verification
 
