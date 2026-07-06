@@ -49,8 +49,6 @@ Copilot also raised points about priority tie-breaking, conflict definitions, an
 
 My scheduler considers two main constraints: task priority (high/medium/low) and available time (in minutes). generate_plan() sorts tasks by priority first, then greedily fills the available time budget, so higher-priority tasks are always favored when time is limited. I decided priority and time mattered most because they're the two things a busy pet owner cares about most directly — what's most important to get done, and how much time they actually have. Owner preferences (like max hours per day) exist as a data structure but aren't yet used directly in scheduling logic — that's a possible improvement for later.
 
-
-
 **b. Tradeoffs**
 
 My conflict detection only checks for exact matching time strings (e.g., "09:00" vs "09:00"), rather than detecting overlapping durations (e.g., a 30-minute task starting at 08:45 overlapping a 09:00 task). This is a simpler and more predictable approach for a small personal pet-scheduling app, where tasks are usually assigned to fixed time slots rather than flexible windows. A more robust version would parse times and compare intervals, but that adds complexity that isn't necessary at this scale.
@@ -67,6 +65,8 @@ I used AI throughout the project: brainstorming the four core classes and their 
 
 I asked Copilot how to simplify filter_tasks and create_next_occurrence. Its filter_tasks suggestion (combining conditions into one list comprehension) was a genuine improvement, so I adopted it. However, its "simplified" create_next_occurrence actually changed the function's behavior — instead of returning a new Task object ready to attach to a Pet, it returned a datetime representing the next due date. That would have broken complete_task(), which expects a Task back so it can call pet.add_task(). I verified this by tracing through how complete_task() uses the return value, and decided to keep my original version since it matched the rest of my system's design.
 
+---
+
 ## 4. Testing and Verification
 
 **a. What you tested**
@@ -77,16 +77,18 @@ I tested task completion, adding tasks to a pet, sorting by priority, recurring 
 
 I'm fairly confident (4/5) the scheduler works correctly for the cases I tested. If I had more time, I'd test edge cases like: an empty task list, a pet with no tasks at all, three or more tasks all conflicting at the same time, and tasks with missing/invalid time strings.
 
+---
+
 ## 5. Reflection
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+I'm most satisfied with how cleanly the scheduling logic came together — sorting by priority, filtering, conflict detection, and recurring tasks all work independently and combine well in generate_plan() and the Streamlit UI. Wiring the UI to real backend objects using st.session_state also went more smoothly than I expected.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+If I had another iteration, I'd improve conflict detection to check overlapping time ranges instead of just exact time matches, and I'd have Owner preferences (like max hours per day) actually feed into the scheduler instead of just existing as unused data. I'd also fix the small UI quirk where the task title field doesn't clear after adding a task, which led to accidental duplicate tasks during testing.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+The biggest thing I learned is that AI is most useful when I give it specific context (my actual files, my actual design) rather than generic questions, and that I still need to verify what it suggests, since not every "simplification" preserves the original behavior. Being the lead architect meant making the final call on tradeoffs (like keeping my two-step filter logic or rejecting a recurrence rewrite that changed the return type), not just accepting whatever the AI produced.
