@@ -97,12 +97,21 @@ tests/test_pawpal.py .......                                                    
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+1. Enter the owner's name, pet's name, and species at the top of the app.
+2. Add care tasks using the task form — specify a title, duration, priority, optional time, and frequency (once, daily, or weekly). Click "Add task" to save it.
+3. View all tasks in the "Current Tasks" section. Use the "Filter by pet" and "Filter by status" dropdowns to narrow down the list (for example, showing only incomplete tasks for a specific pet).
+4. Click "Complete" next to any task to mark it done. If the task is recurring (daily/weekly), a new occurrence is automatically created and added to the list.
+5. Set "Available minutes today" and click "Generate schedule" to produce a prioritized daily plan. High-priority tasks are scheduled first, and tasks are added until the time budget runs out.
+6. If two tasks are scheduled at the same time, a conflict warning appears below the plan.
+7. Expand "Why this plan?" to see a plain-language explanation of which tasks were included and why.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+### Example workflow
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+Add a pet named "Biscuit," then add two tasks: "Morning walk" (30 min, high priority, daily, 08:00) and "Feeding" (10 min, high priority, daily, 09:00). Set available minutes to 60 and click "Generate schedule" — both tasks appear in the plan since they fit within the time budget and are both high priority.
+
+```
+Daily Plan:
+- Morning walk (Pet: Biscuit, Duration: 30 mins, Priority: high)
+- Feeding (Pet: Biscuit, Duration: 10 mins, Priority: high)
+Tasks were included based on priority and available time.
+```
